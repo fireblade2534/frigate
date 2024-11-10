@@ -19,3 +19,5 @@ core
 !/web/**/*.ts
 .idea/*
 .ipynb_checkpoints
+yolo11n.pt
+yolo11s.pt

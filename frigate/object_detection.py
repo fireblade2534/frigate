@@ -69,15 +69,17 @@ class LocalObjectDetector(ObjectDetector):
 
     def detect(self, tensor_input: np.ndarray, threshold=0.4):
         detections = []
-
         raw_detections = self.detect_raw(tensor_input)
-
+        print("Ran Detect")
         for d in raw_detections:
             if int(d[0]) < 0 or int(d[0]) >= len(self.labels):
                 logger.warning(f"Raw Detect returned invalid label: {d}")
                 continue
             if d[1] < threshold:
+                if d[1] != 0:
+                    print("AW")
                 break
+            print(f"Detected {self.labels[int(d[0])]}")
             detections.append(
                 (self.labels[int(d[0])], float(d[1]), (d[2], d[3], d[4], d[5]))
             )

@@ -36,6 +36,7 @@ class ModelTypeEnum(str, Enum):
     ssd = "ssd"
     yolox = "yolox"
     yolonas = "yolonas"
+    yolo="yolo"
 
 
 class ModelConfig(BaseModel):

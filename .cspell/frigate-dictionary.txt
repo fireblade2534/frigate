@@ -266,6 +266,7 @@ Ubiquiti
 udev
 udevadm
 ultrafast
+ultralytics
 unichip
 unidecode
 Unifi
