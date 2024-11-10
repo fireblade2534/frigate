@@ -11,6 +11,7 @@ from frigate.detectors.detector_config import (
     ModelTypeEnum,
 )
 import torch
+torch.cuda.set_device(0)
 from frigate.util.model import get_ort_providers
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class YOLODetector(DetectionApi):
         providers, options = get_ort_providers(
             detector_config.device == "CPU", detector_config.device
         )
-        self.model = ultralytics.YOLO("yolo11s.pt")
+        self.model = ultralytics.YOLO("yolo11s.pt", device='gpu')
 
         self.h = detector_config.model.height
         self.w = detector_config.model.width
@@ -87,7 +88,6 @@ class YOLODetector(DetectionApi):
                         float(NormSize[2]),
                     ]
                     Count+=1
-            print(detections)
             return detections
         else:
             raise Exception(
