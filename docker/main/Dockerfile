@@ -287,7 +287,7 @@ COPY web/package.json web/package-lock.json ./
 RUN npm install
 
 COPY web/ ./
-RUN npm run build \
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build \
     && mv dist/BASE_PATH/monacoeditorwork/* dist/assets/ \
     && rm -rf dist/BASE_PATH
 
