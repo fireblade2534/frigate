@@ -12,7 +12,14 @@ from frigate.detectors.detector_config import (
     ModelTypeEnum,
 )
 
+
 torch.cuda.set_device(0)
+
+try:
+    import ultralytics
+except ModuleNotFoundError:
+    raise
+
 from frigate.util.model import get_ort_providers
 
 logger = logging.getLogger(__name__)
@@ -29,15 +36,7 @@ class YOLODetector(DetectionApi):
     type_key = DETECTOR_KEY
 
     def __init__(self, detector_config: YOLODetectorConfig):
-        try:
-            import ultralytics
 
-            logger.info("YOLO: loaded ultralytics module")
-        except ModuleNotFoundError:
-            logger.error(
-                "YOLO: module loading failed, need 'pip install ultralytics'?!?"
-            )
-            raise
 
         path = detector_config.model.path
         logger.info(f"YOLO: loading {detector_config.model.path}")
@@ -46,7 +45,7 @@ class YOLODetector(DetectionApi):
         #    detector_config.device == "CPU", detector_config.device
         #)
         ModelName="yolo11s.pt"
-        Paths=f"/config/model_cache/yolo/{ModelName}"
+        self.Paths=f"/config/model_cache/yolo/{ModelName}"
         """
         if os.path.isfile(Paths):
 
@@ -54,7 +53,7 @@ class YOLODetector(DetectionApi):
             self.model = ultralytics.YOLO(f"{ModelName}")
             os.replace(f"{ModelName}",f"config/model_cache/yolo/{ModelName}")
         """
-        self.model = ultralytics.YOLO(Paths)
+
         self.h = detector_config.model.height
         self.w = detector_config.model.width
         self.onnx_model_type = detector_config.model.model_type
@@ -65,6 +64,7 @@ class YOLODetector(DetectionApi):
         logger.info(f"YOLO: {path} loaded")
 
     def detect_raw(self, tensor_input: np.ndarray):
+        self.model = ultralytics.YOLO(self.Paths)
         # print(tensor_input,type(tensor_input),tensor_input.shape,tensor_input.dtype)
         # tensor_input = tensor_input.astype(self.onnx_model_shape)
         tensor_input = tensor_input.astype(np.float32)
