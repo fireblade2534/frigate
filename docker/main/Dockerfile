@@ -179,7 +179,8 @@ RUN /build_pysqlite3.sh
 
 COPY docker/main/requirements-wheels.txt /requirements-wheels.txt
 RUN pip3 wheel --wheel-dir=/wheels -r /requirements-wheels.txt
-
+RUN pip3 uninstall -y opencv-python
+RUN pip3 install opencv-python-headless
 
 # Collect deps in a single layer
 FROM scratch AS deps-rootfs
@@ -228,7 +229,7 @@ RUN --mount=type=bind,from=wheels,source=/wheels,target=/deps/wheels \
     pip3 install ultralytics && \
     pip3 uninstall -y opencv-python && \
     pip3 install opencv-python-headless
-    COPY --from=deps-rootfs / /
+COPY --from=deps-rootfs / /
 
 RUN ldconfig
 
