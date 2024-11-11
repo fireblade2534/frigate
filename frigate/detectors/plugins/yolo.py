@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from pydantic import Field
 from typing_extensions import Literal
+import os
 
 from frigate.detectors.detection_api import DetectionApi
 from frigate.detectors.detector_config import (
@@ -41,11 +42,15 @@ class YOLODetector(DetectionApi):
         path = detector_config.model.path
         logger.info(f"YOLO: loading {detector_config.model.path}")
 
-        providers, options = get_ort_providers(
-            detector_config.device == "CPU", detector_config.device
-        )
-        self.model = ultralytics.YOLO("yolo11s.pt")
-
+        #providers, options = get_ort_providers(
+        #    detector_config.device == "CPU", detector_config.device
+        #)
+        ModelName="yolo11s.pt"
+        Paths=f"config/model_cache/yolo/{ModelName}"
+        if not os.path.isfile(Paths):
+            self.model = ultralytics.YOLO(f"{ModelName}")
+            os.replace(f"{ModelName}",f"config/model_cache/yolo/{ModelName}")
+        self.model = ultralytics.YOLO(Paths)
         self.h = detector_config.model.height
         self.w = detector_config.model.width
         self.onnx_model_type = detector_config.model.model_type
