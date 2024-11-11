@@ -46,7 +46,7 @@ class YOLODetector(DetectionApi):
         #    detector_config.device == "CPU", detector_config.device
         #)
         ModelName="yolo11s.pt"
-        Paths=f"config/model_cache/yolo/{ModelName}"
+        Paths=f"/config/model_cache/yolo/{ModelName}"
         """
         if os.path.isfile(Paths):
 
