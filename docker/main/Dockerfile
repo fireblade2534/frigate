@@ -172,8 +172,6 @@ RUN wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py \
 
 COPY docker/main/requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
-RUN pip3 uninstall -y opencv-python
-RUN pip3 install opencv-python-headless
 
 # Build pysqlite3 from source
 COPY docker/main/build_pysqlite3.sh /build_pysqlite3.sh
@@ -226,9 +224,11 @@ RUN --mount=type=bind,source=docker/main/install_deps.sh,target=/deps/install_de
 RUN --mount=type=bind,from=wheels,source=/wheels,target=/deps/wheels \
     python3 -m pip install --upgrade pip && \
     pip3 install -U /deps/wheels/*.whl && \
-    pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-
-COPY --from=deps-rootfs / /
+    pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 && \
+    pip3 install ultralytics && \
+    pip3 uninstall -y opencv-python && \
+    pip3 install opencv-python-headless
+    COPY --from=deps-rootfs / /
 
 RUN ldconfig
 
