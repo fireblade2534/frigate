@@ -174,7 +174,7 @@ COPY docker/main/requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
 RUN pip3 uninstall -y opencv-python
 RUN pip3 install opencv-python-headless
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
 # Build pysqlite3 from source
 COPY docker/main/build_pysqlite3.sh /build_pysqlite3.sh
 RUN /build_pysqlite3.sh
@@ -225,7 +225,8 @@ RUN --mount=type=bind,source=docker/main/install_deps.sh,target=/deps/install_de
 
 RUN --mount=type=bind,from=wheels,source=/wheels,target=/deps/wheels \
     python3 -m pip install --upgrade pip && \
-    pip3 install -U /deps/wheels/*.whl
+    pip3 install -U /deps/wheels/*.whl && \
+    pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
 COPY --from=deps-rootfs / /
 
