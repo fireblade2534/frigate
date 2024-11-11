@@ -24,7 +24,7 @@ DETECTOR_KEY = "yolo"
 
 class YOLODetectorConfig(BaseDetectorConfig):
     type: Literal[DETECTOR_KEY]
-    device: str = Field(default="AUTO", title="Device Type")
+    device: str = Field(default=0, title="Device Type")
 
 
 class YOLODetector(DetectionApi):
@@ -35,9 +35,9 @@ class YOLODetector(DetectionApi):
         path = detector_config.model.path
         logger.info(f"YOLO: loading {detector_config.model.path}")
 
-        #providers, options = get_ort_providers(
-        #    detector_config.device == "CPU", detector_config.device
-        #)
+        providers, options = get_ort_providers(
+            detector_config.device == "CPU", detector_config.device
+        )
         ModelName="yolo11s.pt"
         Paths=f"/config/model_cache/yolo/{ModelName}"
         """
@@ -71,7 +71,7 @@ class YOLODetector(DetectionApi):
         tensor_output = model(tensor_input, verbose=False)
         # print(tensor_output)
         if self.onnx_model_type == ModelTypeEnum.yolo:
-            prediction = tensor_output[0].cpu()
+            prediction = tensor_output[0]
             # print(prediction.names)
             detections = np.zeros((20, 6), np.float32)
             Count = 0
