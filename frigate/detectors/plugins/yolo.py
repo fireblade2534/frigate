@@ -1,8 +1,8 @@
 import logging
 
 import numpy as np
+import torch
 from pydantic import Field
-from sympy import Rem
 from typing_extensions import Literal
 
 from frigate.detectors.detection_api import DetectionApi
@@ -10,7 +10,7 @@ from frigate.detectors.detector_config import (
     BaseDetectorConfig,
     ModelTypeEnum,
 )
-import torch
+
 torch.cuda.set_device(0)
 from frigate.util.model import get_ort_providers
 
@@ -44,7 +44,7 @@ class YOLODetector(DetectionApi):
         providers, options = get_ort_providers(
             detector_config.device == "CPU", detector_config.device
         )
-        self.model = ultralytics.YOLO("yolo11s.pt", device='gpu')
+        self.model = ultralytics.YOLO("yolo11s.pt")
 
         self.h = detector_config.model.height
         self.w = detector_config.model.width
@@ -56,27 +56,27 @@ class YOLODetector(DetectionApi):
         logger.info(f"YOLO: {path} loaded")
 
     def detect_raw(self, tensor_input: np.ndarray):
-        #print(tensor_input,type(tensor_input),tensor_input.shape,tensor_input.dtype)
-        #tensor_input = tensor_input.astype(self.onnx_model_shape)
-        tensor_input=tensor_input.astype(np.float32)
-        tensor_input=torch.from_numpy(tensor_input)
+        # print(tensor_input,type(tensor_input),tensor_input.shape,tensor_input.dtype)
+        # tensor_input = tensor_input.astype(self.onnx_model_shape)
+        tensor_input = tensor_input.astype(np.float32)
+        tensor_input = torch.from_numpy(tensor_input)
         tensor_input /= 255.0
-        #print(tensor_input,type(tensor_input))
-        #model_input_name = self.model.get_inputs()[0].name
-        tensor_output = self.model(tensor_input,verbose=False)
-        #print(tensor_output)
+        # print(tensor_input,type(tensor_input))
+        # model_input_name = self.model.get_inputs()[0].name
+        tensor_output = self.model(tensor_input, verbose=False, device=0)
+        # print(tensor_output)
         if self.onnx_model_type == ModelTypeEnum.yolo:
-            prediction=tensor_output[0]
-            #print(prediction.names)
+            prediction = tensor_output[0]
+            # print(prediction.names)
             detections = np.zeros((20, 6), np.float32)
-            Count=0
+            Count = 0
             for P in prediction.boxes:
-                #print(prediction.boxes,type(prediction.boxes))
+                # print(prediction.boxes,type(prediction.boxes))
 
                 if Count == 20:
                     break
-                NormSize=P.xywhn[0]
-                Valid=[0,2,3,5,7]
+                NormSize = P.xywhn[0]
+                Valid = [0, 2, 3, 5, 7]
                 if int(P.cls) in Valid:
                     # when running in GPU mode, empty predictions in the output have class_id of -1
                     detections[Count] = [
@@ -87,7 +87,7 @@ class YOLODetector(DetectionApi):
                         float(NormSize[3]),
                         float(NormSize[2]),
                     ]
-                    Count+=1
+                    Count += 1
             return detections
         else:
             raise Exception(
