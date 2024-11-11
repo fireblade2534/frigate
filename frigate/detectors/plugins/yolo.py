@@ -6,13 +6,15 @@ from pydantic import Field
 from typing_extensions import Literal
 import os
 
+from zmq import device
+import ultralytics
 from frigate.detectors.detection_api import DetectionApi
 from frigate.detectors.detector_config import (
     BaseDetectorConfig,
     ModelTypeEnum,
 )
 
-torch.cuda.set_device(0)
+#torch.cuda.set_device(0)
 from frigate.util.model import get_ort_providers
 
 logger = logging.getLogger(__name__)
@@ -29,15 +31,6 @@ class YOLODetector(DetectionApi):
     type_key = DETECTOR_KEY
 
     def __init__(self, detector_config: YOLODetectorConfig):
-        try:
-            import ultralytics
-
-            logger.info("YOLO: loaded ultralytics module")
-        except ModuleNotFoundError:
-            logger.error(
-                "YOLO: module loading failed, need 'pip install ultralytics'?!?"
-            )
-            raise
 
         path = detector_config.model.path
         logger.info(f"YOLO: loading {detector_config.model.path}")
@@ -65,6 +58,9 @@ class YOLODetector(DetectionApi):
         logger.info(f"YOLO: {path} loaded")
 
     def detect_raw(self, tensor_input: np.ndarray):
+        ModelName="yolo11s.pt"
+        Paths=f"/config/model_cache/yolo/{ModelName}"
+        model = ultralytics.YOLO(Paths)
         # print(tensor_input,type(tensor_input),tensor_input.shape,tensor_input.dtype)
         # tensor_input = tensor_input.astype(self.onnx_model_shape)
         tensor_input = tensor_input.astype(np.float32)
@@ -72,7 +68,7 @@ class YOLODetector(DetectionApi):
         tensor_input /= 255.0
         # print(tensor_input,type(tensor_input))
         # model_input_name = self.model.get_inputs()[0].name
-        tensor_output = self.model(tensor_input, verbose=False)
+        tensor_output = model(tensor_input, verbose=False)
         # print(tensor_output)
         if self.onnx_model_type == ModelTypeEnum.yolo:
             prediction = tensor_output[0].cpu()
