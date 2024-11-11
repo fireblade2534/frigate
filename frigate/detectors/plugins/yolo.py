@@ -68,7 +68,7 @@ class YOLODetector(DetectionApi):
         tensor_input /= 255.0
         # print(tensor_input,type(tensor_input))
         # model_input_name = self.model.get_inputs()[0].name
-        tensor_output = model(tensor_input, verbose=False)
+        tensor_output = model(tensor_input, verbose=False,device=0)
         # print(tensor_output)
         if self.onnx_model_type == ModelTypeEnum.yolo:
             prediction = tensor_output[0]
