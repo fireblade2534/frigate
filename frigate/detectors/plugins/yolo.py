@@ -47,9 +47,13 @@ class YOLODetector(DetectionApi):
         #)
         ModelName="yolo11s.pt"
         Paths=f"config/model_cache/yolo/{ModelName}"
-        if not os.path.isfile(Paths):
+        """
+        if os.path.isfile(Paths):
+
+        else:
             self.model = ultralytics.YOLO(f"{ModelName}")
             os.replace(f"{ModelName}",f"config/model_cache/yolo/{ModelName}")
+        """
         self.model = ultralytics.YOLO(Paths)
         self.h = detector_config.model.height
         self.w = detector_config.model.width
