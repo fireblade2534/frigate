@@ -335,7 +335,7 @@ class FrigateApp:
 
             try:
                 shm_out = mp.shared_memory.SharedMemory(
-                    name=f"out-{name}", create=True, size=20 * 6 * 4
+                    name=f"out-{name}", create=True, size=20 * 6 * 20
                 )
             except FileExistsError:
                 shm_out = mp.shared_memory.SharedMemory(name=f"out-{name}")

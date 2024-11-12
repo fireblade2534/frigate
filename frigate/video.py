@@ -549,6 +549,7 @@ def process_frames(
     region_grid,
     exit_on_empty: bool = False,
 ):
+    
     next_region_update = get_tomorrow_at_time(2)
     config_subscriber = ConfigSubscriber(f"config/detect/{camera_name}")
 
