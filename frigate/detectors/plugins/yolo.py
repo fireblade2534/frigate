@@ -38,7 +38,7 @@ class YOLODetector(DetectionApi):
         providers, options = get_ort_providers(
             detector_config.device == "CPU", detector_config.device
         )
-        ModelName="yolo11s.pt"
+        ModelName="yolo11s.engine"
         Paths=f"/config/model_cache/yolo/{ModelName}"
         """
         if os.path.isfile(Paths):
@@ -58,9 +58,9 @@ class YOLODetector(DetectionApi):
         logger.info(f"YOLO: {path} loaded")
 
     def detect_raw(self, tensor_input: np.ndarray):
-        ModelName="yolo11s.pt"
-        Paths=f"/config/model_cache/yolo/{ModelName}"
-        model = ultralytics.YOLO(Paths)
+        #ModelName="yolo11s.engine"
+        #Paths=f"/config/model_cache/yolo/{ModelName}"
+        #model = ultralytics.YOLO(Paths)
         # print(tensor_input,type(tensor_input),tensor_input.shape,tensor_input.dtype)
         # tensor_input = tensor_input.astype(self.onnx_model_shape)
         tensor_input = tensor_input.astype(np.float32)
@@ -68,7 +68,7 @@ class YOLODetector(DetectionApi):
         tensor_input /= 255.0
         # print(tensor_input,type(tensor_input))
         # model_input_name = self.model.get_inputs()[0].name
-        tensor_output = model(tensor_input, verbose=False,device=0)
+        tensor_output = self.model(tensor_input, verbose=False,device=0)
         # print(tensor_output)
         if self.onnx_model_type == ModelTypeEnum.yolo:
             prediction = tensor_output[0]
@@ -93,6 +93,7 @@ class YOLODetector(DetectionApi):
                         float(NormSize[2]),
                     ]
                     Count += 1
+            print(detections)
             return detections
         else:
             raise Exception(
