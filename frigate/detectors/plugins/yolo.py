@@ -93,7 +93,6 @@ class YOLODetector(DetectionApi):
                         float(NormSize[2]),
                     ]
                     Count += 1
-            print(detections)
             return detections
         else:
             raise Exception(

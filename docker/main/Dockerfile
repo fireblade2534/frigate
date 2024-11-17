@@ -228,7 +228,7 @@ RUN --mount=type=bind,from=wheels,source=/wheels,target=/deps/wheels \
     pip3 uninstall -y opencv-python && \
     pip3 install -U /deps/wheels/*.whl && \
     pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 && \
-    pip3 install tensorrt
+    pip3 install tensorrt==8.6.1
 
     #pip3 uninstall -y opencv-python && \
     #pip3 install opencv-python-headless
