@@ -147,7 +147,8 @@ RUN apt-get -qq update \
     gpg --dearmor > /usr/share/keyrings/debian-archive-bullseye-stable.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/debian-archive-bullseye-stable.gpg] http://deb.debian.org/debian bullseye main contrib non-free" | \
     tee /etc/apt/sources.list.d/debian-bullseye-nonfree.list \
-    && wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-debian11.repo -O /etc/apt/sources.list.d/cuda.list \
+    && wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.1-1_all.deb \
+    && dpkg -i cuda-keyring_1.1-1_all.deb \
     && apt-get -qq update \
     && apt-get -qq install -y \
     python3.9 \
