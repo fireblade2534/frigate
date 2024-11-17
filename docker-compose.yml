@@ -10,7 +10,7 @@ services:
       - "44"  # video
       - "46"  # plugdev
     shm_size: "4024MB"
-    image: frigate
+    image: tensorrt
     #build:
     #  context: .
     #  dockerfile: docker/main/Dockerfile

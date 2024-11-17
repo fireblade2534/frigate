@@ -35,9 +35,9 @@ class YOLODetector(DetectionApi):
         path = detector_config.model.path
         logger.info(f"YOLO: loading {detector_config.model.path}")
 
-        providers, options = get_ort_providers(
-            detector_config.device == "CPU", detector_config.device
-        )
+        #providers, options = get_ort_providers(
+        #    detector_config.device == "CPU", detector_config.device
+        #)
         ModelName="yolo11s.engine"
         Paths=f"/config/model_cache/yolo/{ModelName}"
         """
