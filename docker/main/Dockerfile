@@ -147,6 +147,10 @@ RUN apt-get -qq update \
     gpg --dearmor > /usr/share/keyrings/debian-archive-bullseye-stable.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/debian-archive-bullseye-stable.gpg] http://deb.debian.org/debian bullseye main contrib non-free" | \
     tee /etc/apt/sources.list.d/debian-bullseye-nonfree.list \
+    && wget https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/cuda-${OS}.pin \
+    && mv cuda-${OS}.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
+    && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/3bf863cc.pub \
+    && add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/ /" \
     && apt-get -qq update \
     && apt-get -qq install -y \
     python3.9 \
