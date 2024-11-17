@@ -66,6 +66,7 @@ class YOLODetector(DetectionApi):
         tensor_input = tensor_input.astype(np.float32)
         tensor_input = torch.from_numpy(tensor_input)
         tensor_input /= 255.0
+        print("yay running")
         # print(tensor_input,type(tensor_input))
         # model_input_name = self.model.get_inputs()[0].name
         tensor_output = self.model(tensor_input, verbose=False,device=0)
